@@ -18,7 +18,8 @@ No paid developer account needed: you install from Xcode on a Mac with a free Ap
    - Find your Team ID in *Xcode → Settings → Accounts →* select your account, and read the 10-character ID next to your Personal Team (or at developer.apple.com/account, under Membership details).
    - This writes the gitignored `Local.xcconfig` and creates `Bajada.xcodeproj`.
 4. **Turn on Developer Mode** on the iPhone (*Settings → Privacy & Security → Developer Mode*, then restart) and on the Ultra (same path on the watch; it appears once Xcode has seen the watch). Connect the iPhone by cable the first time and tap *Trust*.
-5. **Deploy:** `make deploy` builds both apps and installs them with `xcrun devicectl`. `make deploy` has not been verified on hardware yet; if it fails, open `Bajada.xcodeproj` and press Run on each scheme (`Bajada` with the iPhone selected, then `BajadaWatch` with the Ultra selected).
+5. **First install from Xcode:** open `Bajada.xcodeproj` and press Run on `Bajada` with the iPhone selected, then on `BajadaWatch` with the Ultra selected. Doing the first run in Xcode lets it register both devices with your free team and answer the one-time keychain prompt for signing.
+   After that, `make deploy` rebuilds and installs both apps from the terminal with `xcrun devicectl`. It has not been verified on hardware yet; if it fails, pressing Run in Xcode always works.
 6. **First launch only:** on the iPhone, trust your profile in *Settings → General → VPN & Device Management*.
 7. **Every week:** run `make deploy` again, ideally the evening before you play.
 

@@ -54,8 +54,9 @@ test:
 # always: open Bajada.xcodeproj and press Run on each scheme (Bajada with the
 # iPhone selected, BajadaWatch with the Ultra selected).
 #
-# Device IDs are auto-detected with `xcrun devicectl list devices`; override
-# with IPHONE_ID=<id> WATCH_ID=<id> (the "Identifier" column of that command).
+# Device UDIDs are auto-detected with `xcrun devicectl list devices`; override
+# with IPHONE_ID=<udid> WATCH_ID=<udid>. Building for the specific devices (not a
+# generic destination) lets Xcode register them with a free Personal Team.
 deploy:
 	@test -d $(PROJECT) || { echo "No $(PROJECT). Run: make setup TEAM_ID=<your team id>"; exit 1; }
 	@iphone="$(IPHONE_ID)"; watch="$(WATCH_ID)"; \
@@ -66,9 +67,15 @@ deploy:
 	  echo "Or open $(PROJECT) and press Run on each scheme."; exit 1; \
 	fi; \
 	echo "iPhone: $$iphone"; echo "Watch:  $${watch:-not found}"; \
-	echo "==> Building Bajada (iPhone app with the watch app embedded)"; \
+	if [ -n "$$watch" ]; then \
+	  echo "==> Building BajadaWatch for the watch (registers it with your team)"; \
+	  xcodebuild -project $(PROJECT) -scheme BajadaWatch -configuration $(CONFIG) \
+	    -destination "id=$$watch" -derivedDataPath $(BUILD_DIR) \
+	    -allowProvisioningUpdates build || watch=""; \
+	fi; \
+	echo "==> Building Bajada for the iPhone (the watch app is embedded)"; \
 	xcodebuild -project $(PROJECT) -scheme Bajada -configuration $(CONFIG) \
-	  -destination 'generic/platform=iOS' -derivedDataPath $(BUILD_DIR) \
+	  -destination "id=$$iphone" -derivedDataPath $(BUILD_DIR) \
 	  -allowProvisioningUpdates build \
 	  || { echo "Build failed. If the error mentions HealthKit or provisioning, re-run: make setup TEAM_ID=... NO_HEALTHKIT=1"; \
 	       echo "Or open $(PROJECT) and press Run on each scheme."; exit 1; }; \
@@ -77,13 +84,9 @@ deploy:
 	  $(BUILD_DIR)/Build/Products/$(CONFIG)-iphoneos/Bajada.app \
 	  || { echo "iPhone install failed. Open $(PROJECT) and press Run on each scheme."; exit 1; }; \
 	if [ -n "$$watch" ]; then \
-	  echo "==> Building BajadaWatch"; \
-	  xcodebuild -project $(PROJECT) -scheme BajadaWatch -configuration $(CONFIG) \
-	    -destination 'generic/platform=watchOS' -derivedDataPath $(BUILD_DIR) \
-	    -allowProvisioningUpdates build \
-	    && { echo "==> Installing on the watch"; \
-	         xcrun devicectl device install app --device "$$watch" \
-	           $(BUILD_DIR)/Build/Products/$(CONFIG)-watchos/BajadaWatch.app; } \
+	  echo "==> Installing on the watch"; \
+	  xcrun devicectl device install app --device "$$watch" \
+	    $(BUILD_DIR)/Build/Products/$(CONFIG)-watchos/BajadaWatch.app \
 	    || echo "Watch step failed (the iPhone install normally carries the watch app too). Otherwise: open $(PROJECT) and press Run on the BajadaWatch scheme."; \
 	else \
 	  echo "No watch found: relying on the iPhone install to push the embedded watch app."; \

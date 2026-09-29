@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Print the CoreDevice identifier of the first connected iPhone or Apple Watch.
+"""Print the UDID of the first connected iPhone or Apple Watch.
+
+The UDID works both as an `xcodebuild -destination id=` value (which lets Xcode
+register the device with a free Personal Team) and as a `devicectl --device` value.
 
 Usage: device_id.py iphone|watch
 Reads the JSON written by `xcrun devicectl list devices --json-output`.
@@ -38,7 +41,7 @@ def main() -> int:
         if tunnel == "unavailable" and not paired:
             continue
         rank = 0 if tunnel == "connected" else 1
-        candidates.append((rank, dev.get("identifier", "")))
+        candidates.append((rank, hw.get("udid") or dev.get("identifier", "")))
     candidates.sort()
     if not candidates or not candidates[0][1]:
         return 1
