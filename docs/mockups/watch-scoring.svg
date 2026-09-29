@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1020 570" width="1020" height="570" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif">
+  <title>Apple Watch Ultra scoring flow (mockup)</title>
+  <defs>
+    <g id="watch">
+      <!-- band stubs -->
+      <rect x="75" y="0" width="130" height="44" rx="10" fill="#2C2C2E"/>
+      <rect x="75" y="376" width="130" height="44" rx="10" fill="#2C2C2E"/>
+      <!-- Action Button (orange, left side) -->
+      <rect x="-9" y="150" width="12" height="64" rx="5" fill="#FF6A00"/>
+      <!-- Digital Crown + side button (right side) -->
+      <rect x="277" y="104" width="16" height="50" rx="6" fill="#8E8E93"/>
+      <rect x="277" y="186" width="10" height="64" rx="4" fill="#6E6E73"/>
+      <!-- case, bezel, screen -->
+      <rect x="0" y="30" width="280" height="360" rx="68" fill="#5E5E63"/>
+      <rect x="10" y="40" width="260" height="340" rx="60" fill="#1C1C1E"/>
+      <rect x="20" y="50" width="240" height="320" rx="50" fill="#000000"/>
+    </g>
+  </defs>
+
+  <rect width="1020" height="570" rx="24" fill="#F2F2F7"/>
+  <text x="510" y="42" text-anchor="middle" font-size="20" font-weight="700" fill="#1C1C1E">Apple Watch Ultra: scoring flow (mockup)</text>
+
+  <!-- 1. Scoring -->
+  <g transform="translate(40,66)">
+    <use href="#watch"/>
+    <text x="44" y="80" font-size="14" font-weight="700" fill="#FFFFFF">6–4 · 3–2</text>
+    <text x="236" y="80" font-size="13" text-anchor="end" fill="#8E8E93">47:12</text>
+    <rect x="30" y="92" width="220" height="120" rx="22" fill="#0A84FF"/>
+    <text x="46" y="118" font-size="13" font-weight="700" fill="#FFFFFF" fill-opacity="0.85">US</text>
+    <text x="236" y="186" font-size="66" font-weight="800" text-anchor="end" fill="#FFFFFF">30</text>
+    <circle cx="53" cy="191" r="7" fill="#E8F53A"/>
+    <text x="66" y="196" font-size="12" font-weight="600" fill="#FFFFFF">Ana · right</text>
+    <rect x="30" y="220" width="220" height="120" rx="22" fill="#FF9F0A"/>
+    <text x="46" y="246" font-size="13" font-weight="700" fill="#1C1C1E" fill-opacity="0.85">THEM</text>
+    <text x="236" y="314" font-size="66" font-weight="800" text-anchor="end" fill="#1C1C1E">15</text>
+    <rect x="102" y="346" width="76" height="20" rx="10" fill="#2C2C2E"/>
+    <text x="140" y="360" font-size="11" font-weight="600" text-anchor="middle" fill="#FFFFFF">↶ Undo</text>
+  </g>
+
+  <!-- 2. Star Point -->
+  <g transform="translate(370,66)">
+    <use href="#watch"/>
+    <text x="44" y="80" font-size="14" font-weight="700" fill="#FFFFFF">6–4 · 5–5</text>
+    <text x="236" y="80" font-size="13" text-anchor="end" fill="#8E8E93">1:02:40</text>
+    <rect x="30" y="90" width="220" height="32" rx="12" fill="#FFD60A"/>
+    <text x="140" y="111" font-size="14" font-weight="800" text-anchor="middle" fill="#1C1C1E">★ STAR POINT</text>
+    <rect x="30" y="128" width="220" height="102" rx="22" fill="#0A84FF"/>
+    <text x="46" y="152" font-size="13" font-weight="700" fill="#FFFFFF" fill-opacity="0.85">US</text>
+    <text x="236" y="210" font-size="60" font-weight="800" text-anchor="end" fill="#FFFFFF">40</text>
+    <circle cx="53" cy="208" r="7" fill="#E8F53A"/>
+    <text x="66" y="213" font-size="12" font-weight="600" fill="#FFFFFF">Ben</text>
+    <rect x="30" y="238" width="220" height="102" rx="22" fill="#FF9F0A"/>
+    <text x="46" y="262" font-size="13" font-weight="700" fill="#1C1C1E" fill-opacity="0.85">THEM</text>
+    <text x="236" y="320" font-size="60" font-weight="800" text-anchor="end" fill="#1C1C1E">40</text>
+    <text x="46" y="318" font-size="11" font-weight="700" fill="#1C1C1E">pick L / R</text>
+    <rect x="102" y="346" width="76" height="20" rx="10" fill="#2C2C2E"/>
+    <text x="140" y="360" font-size="11" font-weight="600" text-anchor="middle" fill="#FFFFFF">↶ Undo</text>
+  </g>
+
+  <!-- 3. Summary -->
+  <g transform="translate(700,66)">
+    <use href="#watch"/>
+    <text x="140" y="94" font-size="12" font-weight="700" text-anchor="middle" fill="#8E8E93" letter-spacing="1">MATCH OVER</text>
+    <text x="140" y="128" font-size="24" font-weight="800" text-anchor="middle" fill="#30D158">You won</text>
+    <text x="140" y="172" font-size="23" font-weight="800" text-anchor="middle" fill="#FFFFFF"><tspan>6–4</tspan><tspan dx="12">3–6</tspan><tspan dx="12">10–7</tspan></text>
+    <text x="140" y="194" font-size="11" text-anchor="middle" fill="#8E8E93">super tie-break</text>
+    <text x="140" y="232" font-size="14" text-anchor="middle" fill="#FFFFFF">1h 32m · 612 kcal</text>
+    <text x="140" y="254" font-size="14" text-anchor="middle" fill="#FFFFFF">♥ 138 avg</text>
+    <rect x="40" y="282" width="96" height="36" rx="18" fill="#30D158"/>
+    <text x="88" y="305" font-size="14" font-weight="700" text-anchor="middle" fill="#000000">Save</text>
+    <rect x="144" y="282" width="96" height="36" rx="18" fill="#2C2C2E"/>
+    <text x="192" y="305" font-size="14" font-weight="700" text-anchor="middle" fill="#FFFFFF">Discard</text>
+    <text x="140" y="344" font-size="11" text-anchor="middle" fill="#8E8E93">→ iPhone + Fitness</text>
+  </g>
+
+  <!-- captions -->
+  <g text-anchor="middle">
+    <text x="180" y="518" font-size="15" font-weight="700" fill="#1C1C1E">1 · Tap a half to score</text>
+    <text x="180" y="540" font-size="12" fill="#48484A">ball = server, and the side they serve from</text>
+    <text x="510" y="518" font-size="15" font-weight="700" fill="#1C1C1E">2 · Padel-specific moments</text>
+    <text x="510" y="540" font-size="12" fill="#48484A">Star Point (FIP 2026): receivers pick a side</text>
+    <text x="840" y="518" font-size="15" font-weight="700" fill="#1C1C1E">3 · Summary</text>
+    <text x="840" y="540" font-size="12" fill="#48484A">saved as a workout, synced to iPhone</text>
+  </g>
+</svg>
