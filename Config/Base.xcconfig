@@ -1,0 +1,7 @@
+// Shared build settings. Defaults first; Local.xcconfig (gitignored, optional)
+// may override them, including DEVELOPMENT_TEAM.
+BAJADA_WATCH_INFOPLIST = WatchApp/Info.plist
+BAJADA_WATCH_ENTITLEMENTS = WatchApp/BajadaWatch.entitlements
+BAJADA_SWIFT_FLAGS =
+
+#include? "../Local.xcconfig"

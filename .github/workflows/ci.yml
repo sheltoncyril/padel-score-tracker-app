@@ -1,0 +1,86 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  padelkit-linux:
+    name: PadelKit tests (Linux)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Swift version
+        run: swift --version
+      - name: swift test
+        working-directory: Packages/PadelKit
+        run: swift test
+
+  build-apple:
+    name: Build iPhone + watch apps (unsigned)
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode 26+
+        run: |
+          ls -d /Applications/Xcode*.app
+          latest=$(ls -d /Applications/Xcode_26*.app | sort -V | tail -1)
+          echo "Using $latest"
+          sudo xcode-select -s "$latest/Contents/Developer"
+          xcodebuild -version
+          xcodebuild -showsdks | grep -E 'iOS|watchOS' || true
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: PadelKit tests (macOS)
+        working-directory: Packages/PadelKit
+        run: swift test
+
+      - name: Generate project (HealthKit on)
+        run: make generate
+
+      - name: Build iOS app with embedded watch app (HealthKit on)
+        run: |
+          set -o pipefail
+          xcodebuild -project Bajada.xcodeproj -scheme Bajada \
+            -configuration Debug -destination 'generic/platform=iOS' \
+            -derivedDataPath build/hk \
+            CODE_SIGNING_ALLOWED=NO build | tee build-hk.log | tail -n 40
+
+      - name: Check the watch app carries the HealthKit setup
+        run: |
+          app=$(find build/hk -name BajadaWatch.app -type d | head -1)
+          echo "Found $app"
+          plutil -p "$app/Info.plist"
+          plutil -p "$app/Info.plist" | grep -q workout-processing
+          # Embedded in the iOS app:
+          find build/hk -path '*Bajada.app/Watch/BajadaWatch.app' -type d | grep -q .
+
+      - name: Generate project (NO_HEALTHKIT)
+        run: |
+          rm -rf Bajada.xcodeproj
+          make generate NO_HEALTHKIT=1
+
+      - name: Build iOS app with embedded watch app (NO_HEALTHKIT)
+        run: |
+          set -o pipefail
+          xcodebuild -project Bajada.xcodeproj -scheme Bajada \
+            -configuration Debug -destination 'generic/platform=iOS' \
+            -derivedDataPath build/nohk \
+            CODE_SIGNING_ALLOWED=NO build | tee build-nohk.log | tail -n 40
+
+      - name: Check the NO_HEALTHKIT watch app has no HealthKit setup
+        run: |
+          app=$(find build/nohk -name BajadaWatch.app -type d | head -1)
+          plutil -p "$app/Info.plist"
+          ! plutil -p "$app/Info.plist" | grep -q workout-processing
+          ! plutil -p "$app/Info.plist" | grep -q NSHealth
+
+      - name: Upload build logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: build-*.log

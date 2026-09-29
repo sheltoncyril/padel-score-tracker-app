@@ -1,0 +1,10 @@
+// Copy to Local.xcconfig (gitignored), or let `make setup TEAM_ID=...` write it.
+// Find your Team ID: Xcode > Settings > Accounts > select your account > the
+// 10-character ID next to your Personal Team, or developer.apple.com/account.
+DEVELOPMENT_TEAM = XXXXXXXXXX
+
+// To build without HealthKit (entitlement, background mode and code), also set:
+// BAJADA_WATCH_INFOPLIST = WatchApp/Info.NoHealthKit.plist
+// BAJADA_WATCH_ENTITLEMENTS = WatchApp/BajadaWatch.NoHealthKit.entitlements
+// BAJADA_SWIFT_FLAGS = -D NO_HEALTHKIT
+// (`make setup NO_HEALTHKIT=1` does this for you.)
