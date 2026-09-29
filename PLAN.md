@@ -2,7 +2,8 @@
 
 An iPhone + Apple Watch app, designed for the Apple Watch Ultra first. It keeps the padel score, shows who is serving and from which side, logs the match as a workout, and makes results easy to share.
 
-> **Status:** planning. Nothing is built yet; this is the proposal to agree on first.
+> **Status:** planning. Nothing is built yet.
+> **Decided:** free install from Xcode on your Mac (no $99 program), Apple Watch Ultra 3, advantage scoring by default. See [§11](#11-decisions).
 > Research done in September 2026, when watchOS 27 / iOS 27 were current.
 
 ![Apple Watch mockups: scoring, Star Point, summary](docs/mockups/watch-scoring.svg)
@@ -13,15 +14,15 @@ An iPhone + Apple Watch app, designed for the Apple Watch Ultra first. It keeps 
 
 - **Build a native SwiftUI app.** A watch app scores on court, and an iPhone companion handles setup, history, stats and sharing. Watch apps have to be native Swift: web apps, React Native and Flutter cannot run on the watch.
 - **Put all padel logic in one small Swift package (`PadelKit`).** It is a pure, heavily tested engine that replays a log of points. That one design choice gives unlimited undo, crash-proof matches, sync and stats almost for free.
-- **Install through TestFlight, built in the cloud by GitHub Actions.** No Mac is needed. It does need the Apple Developer Program ($99/yr). Push code, the build appears in TestFlight, you install it on the iPhone, and the watch app comes with it.
+- **Install free from Xcode on your Mac** with your normal Apple Account. `make deploy` puts the iPhone app and the watch app on your devices. The free signature lasts 7 days, so you re-run it weekly (your match history is kept).
 - **Sharing:**
-  - a TestFlight public link and QR code (up to 10,000 people),
-  - result share cards for WhatsApp and Instagram,
-  - later, a free App Store listing.
+  - result share cards for WhatsApp and Instagram, which are free;
+  - friends with a Mac can build the app from the repo;
+  - a TestFlight link for everyone else is a $99/yr upgrade, documented but not planned.
 - **Where it beats existing apps:**
   - scoring you can trust (the clearest complaint in their reviews is a lost score),
   - no paywall,
-  - two Ultra features none of the apps checked advertise: **Action Button** to start a match or undo, and **Double Tap** to score.
+  - Ultra features none of the apps checked advertise: **Double Tap** to score (your Ultra 3 has it), and the **Action Button** to start a match or undo (if HealthKit works on the free account; see §6).
 
 ---
 
@@ -78,7 +79,7 @@ Also checked:
 - **Formats:**
   - best of 1, 3 or 5 sets;
   - 6-game sets with a tie-break at 6–6;
-  - deuce rule: **Advantage / Golden point / Star Point / Silver point**;
+  - deuce rule: **Advantage** (your default) / Golden point / Star Point / Silver point;
   - deciding set played in full, or as a **super tie-break to 10**.
 - **Tap to score.** The top half scores for your team and the bottom half for the opponents. Every tap is confirmed with a haptic, and undo is unlimited.
 - **Serving:**
@@ -88,7 +89,7 @@ Also checked:
   - lets you correct the server at any time.
 - **Alerts:** change ends, tie-break, set point, match point, break point.
 - **Crash-proof.** Every point is saved the moment it happens. An interrupted match resumes exactly where it stopped.
-- **Workout.** Runs a HealthKit workout session, so the app stays on screen when you raise your wrist. Heart rate and calories go to Fitness.
+- **Workout** (if HealthKit works on the free account; tested in Phase 0). Runs a HealthKit workout session, so the app stays on screen when you raise your wrist. Heart rate and calories go to Fitness.
 - **Summary** at the end, sent to the iPhone automatically.
 
 **iPhone**
@@ -106,21 +107,20 @@ Also checked:
   - streaks;
   - a momentum chart (Swift Charts).
 - Share cards in square and 9:16 story formats, plus CSV/JSON export.
-- An external TestFlight group, plus an **Invite friends** QR code in the app.
 
 ### v0.3: Ultra extras and polish
-- **Action Button.** The first press starts a match. Presses during a match run a configurable action (default **Undo**).
-- **Double Tap** (Ultra 2 and later) scores a point for your team. Opt-in.
+- **Double Tap** (Ultra 2 and later, so your Ultra 3) scores a point for your team. Opt-in.
+- **Action Button**, if HealthKit works on the free account. The first press starts a match. Presses during a match run a configurable action (default **Undo**).
 - **Voice calls** through the Ultra's speaker: "Thirty–fifteen", "Star point", "Change ends".
-- A complication / Smart Stack widget, and a dimmed Always-On layout.
+- A dimmed Always-On layout, and a complication / Smart Stack widget if it fits the free account's app limit.
 - A changeover timer: 90 s at a change of ends, 120 s between sets.
 
 ### Later / maybe
 - Americano and Mexicano sessions: points races, rotating partners, a leaderboard.
 - Optional point tagging: winner, error, ace, double fault.
-- iCloud backup.
+- iCloud backup (needs the paid program).
 - Spanish localisation.
-- App Store release.
+- TestFlight / App Store release (needs the paid program; see Appendix A).
 - A spectator web link.
 
 ### Not doing
@@ -179,7 +179,7 @@ Sources: the [FIP Rules of Padel][fiprules] (2026 edition) and the FIP's [Star P
 |---|---|---|---|
 | Pro 2026 (FIP / Premier Padel) | Star Point | Best of 3, tie-break at 6–6 | Full set |
 | Club | Golden point | Best of 3, tie-break at 6–6 | Super tie-break to 10 |
-| Classic | Advantage | Best of 3, tie-break at 6–6 | Full set |
+| **Classic (default)** | Advantage | Best of 3, tie-break at 6–6 | Full set |
 | Americano *(later)* | — | Race to 16 / 24 / 32 points | — |
 
 **What the engine reports after every point:**
@@ -244,7 +244,7 @@ Sources: the [FIP Rules of Padel][fiprules] (2026 edition) and the FIP's [Star P
   - your team's colour and position;
   - haptics and voice;
   - what the Action Button and Double Tap do;
-  - **Invite friends** (QR code).
+  - **Build it yourself:** a link to the repo and setup steps, for friends with a Mac.
 
 ---
 
@@ -253,6 +253,7 @@ Sources: the [FIP Rules of Padel][fiprules] (2026 edition) and the FIP's [Star P
 ```
 padel-score-tracker-app/
 ├── project.yml                  # XcodeGen spec → generates the .xcodeproj (never hand-edited)
+├── Makefile                     # make setup / make deploy: generate, build, install on iPhone + watch
 ├── Packages/PadelKit/           # pure Swift, Foundation only: the rules engine
 │   ├── Sources/PadelKit/        # MatchConfig, MatchEvent, MatchState, replay, serve logic, stats
 │   └── Tests/PadelKitTests/     # table-driven + randomized tests (also run on Linux)
@@ -268,7 +269,7 @@ padel-score-tracker-app/
 ├── Widgets/                     # watch complication + iPhone Live Activity (v0.2–v0.3)
 └── .github/workflows/
     ├── ci.yml                   # every push: engine tests + unsigned iOS/watchOS build
-    └── testflight.yml           # manual / tag / monthly: sign in the cloud → TestFlight
+    └── testflight.yml           # only with the paid program (Appendix A): sign in the cloud → TestFlight
 ```
 
 **Key decisions**
@@ -324,87 +325,74 @@ func replay(_ config: MatchConfig, _ events: [MatchEvent]) -> MatchState
 
 ## 6. Getting it onto your iPhone and Ultra
 
-In practice, an app reaches an Apple Watch in one of two ways:
-- **Xcode**, building it and installing it directly;
-- **Apple's distribution:** TestFlight or the App Store.
+**Decision: install from Xcode on your Mac with a free Apple Account** (a "Personal Team"). It costs nothing. The trade-off is that the signature **expires every 7 days**, so you re-deploy from the Mac once a week. That takes about a minute once it's set up.
 
-(Ad hoc builds also work, but they need the same paid account plus registering every device, so TestFlight is simpler.) Web apps can't run on the watch, and [AltStore / SideStore can't install watch apps][sideload]. That leaves three realistic routes:
+Why this route: an app reaches an Apple Watch only through Xcode or through Apple's paid distribution (TestFlight, App Store, ad hoc). Web apps can't run on the watch, and [AltStore / SideStore can't install watch apps][sideload]. Without the $99/yr program, Xcode is the only way.
 
-| Route | Cost | Mac needed? | Re-install | Share with friends |
+| Route | Cost | Re-install | Share with friends | Status |
 |---|---|---|---|---|
-| **A. TestFlight, built by GitHub Actions** ✅ | $99/yr | **No** | Never: builds last 90 days and are rebuilt automatically | ✅ public link, up to 10,000 people |
-| B. Xcode + free Apple Account | Free | Yes | **Every 7 days** | ❌ each friend would have to build it |
-| C. App Store (later; same account as A) | $99/yr | No | Never | ✅ anyone, via search or link |
+| **Xcode + free Apple Account** | Free | **Every 7 days** | Only friends who have a Mac and build it themselves | ✅ **chosen** |
+| TestFlight via GitHub Actions | $99/yr | Never (builds rebuilt automatically) | ✅ public link, up to 10,000 people | Upgrade path ([Appendix A](#appendix-a-upgrade-path-testflight)) |
+| App Store | $99/yr | Never | ✅ anyone | Later, only if the above happens |
 
-**Recommendation: Route A.** It is the only route that is both easy to install *and* easy to share, and it doesn't need a Mac.
+### One-time setup (about 30 minutes)
+1. **Install Xcode 26 or later** from the Mac App Store, and XcodeGen with `brew install xcodegen`.
+2. **Add your Apple Account** in *Xcode → Settings → Accounts*. Xcode creates your free *Personal Team*.
+3. **Clone the repo and generate the project:** `make setup TEAM_ID=<your team id>` runs `xcodegen` and sets a unique bundle ID such as `com.<yourname>.padel`.
+4. **Prepare the iPhone:**
+   - connect it by cable the first time and tap *Trust*;
+   - turn on *Settings → Privacy & Security → Developer Mode* and restart.
+5. **Prepare the Ultra:** keep it unlocked and near the iPhone, then turn on *Settings → Privacy & Security → Developer Mode* on the watch. The option appears once Xcode has seen the watch.
+6. **Deploy:** `make deploy` builds both apps and installs them on the iPhone and the watch. You can also press Run in Xcode for each scheme.
+7. **First launch only:** on the iPhone, trust your developer profile in *Settings → General → VPN & Device Management*.
 
-### Route A, step by step
-This is a one-time setup: about an hour of your time, plus Apple's approval wait.
+### Every week
+- Run `make deploy` again. Tip: do it the evening before you play, because an expired app won't open until it's re-deployed.
+- **Your data is kept.** Re-deploying installs over the old copy, so match history survives as long as you don't delete the app.
 
-1. **Enroll** in the [Apple Developer Program][enroll] as an *Individual*.
-   - In most countries you can do this from the **Apple Developer app on your iPhone**.
-   - It costs $99/yr, and your Apple Account needs two-factor authentication.
-   - Approval can take a day or two.
-2. **Register the app IDs** `com.<you>.padel` and `com.<you>.padel.watchkitapp` under developer.apple.com → Identifiers, and tick HealthKit on both.
-3. **Create the app** in App Store Connect → Apps → ＋ New App, using that bundle ID. The name must be unique on the store.
-4. **Create an API key** in App Store Connect → Users and Access → Integrations.
-   - Give it the **Admin** role, so Xcode can create signing certificates in the cloud.
-   - Download the `.p8` file. You can only download it once.
-   - Note the Key ID and the Issuer ID.
-5. **Add GitHub secrets** `ASC_KEY_ID`, `ASC_ISSUER_ID` and `ASC_KEY_P8`, plus a variable `APPLE_TEAM_ID`.
-6. **Run the "TestFlight" workflow.** Roughly 15–30 minutes later (the build plus Apple's processing), it shows up in TestFlight.
-7. **On the iPhone:**
-   - install **TestFlight**, accept the invite and tap Install;
-   - the watch app installs itself. If it doesn't, open the Watch app → Available Apps → Install.
+### What the free account changes in the plan
+- **Keep the app count small.** A free team allows at most **3 apps per device** and **10 App IDs per 7 days**. The MVP is only the iPhone app plus its watch app; widgets and complications (each an extra extension) come later, and only if they fit.
+- **HealthKit is uncertain.** Reports conflict on whether a free team can sign the HealthKit entitlement, so **Phase 0 tests it on your devices** before anything depends on it:
+  - **If it works:** everything in this plan stays: the workout session, heart rate and calories in Fitness, and the Action Button (which requires a workout app).
+  - **If it doesn't:** the app is built with a `NO_HEALTHKIT` flag. Scoring, undo and crash-proof resume still work, and Double Tap still works. You set *Watch Settings → General → Return to Clock → Padel → After 1 hour* so the score stays on screen between points. The Action Button and Fitness logging are dropped.
+- **Not available on a free team:** iCloud and push notifications. The plan doesn't need either (iCloud backup was a "later" idea; history is exported as a file instead).
 
-After that, every tagged release lands in TestFlight and updates on your phone and watch. A **monthly scheduled build** keeps you clear of the 90-day expiry.
+### Your devices
+- **Apple Watch Ultra 3** (to double-check: *Settings → General → About → Model*) runs watchOS 27 and **supports Double Tap**, so that's in scope.
+- The minimum stays at iOS 18 / watchOS 11, so friends' older devices work if they build it themselves.
 
-### Route B: free, but only if you own a Mac
-- **Setup:** run `brew install xcodegen && xcodegen`, open the project, pick your *Personal Team*, and run it on the iPhone. Developer Mode must be on for both the iPhone and the watch.
-- **Limits:** the signature **expires after 7 days**, and you can have at most 3 such apps per device. So you re-run from Xcode every week.
-- **HealthKit:** reports conflict on whether free teams get it. The project therefore has a `NO_HEALTHKIT` build flag.
-- **Keeping the score on screen:** without a workout session, set *Watch Settings → General → Return to Clock → Padel → After 1 hour*.
-
-### CI/CD
+### CI
 - **`ci.yml`** runs on every push:
-  - `swift test` for PadelKit on Linux, which is cheap;
-  - on macOS, `xcodegen` plus an unsigned `xcodebuild` of the iOS app with the watch app embedded.
-- **`testflight.yml`** runs manually, on a tag, and monthly:
-  - **Archive** with `-allowProvisioningUpdates` and the API key flags. Signing is managed in the cloud, so no certificates live in the repo.
-  - **Export** with `method: app-store-connect` and `destination: upload`, which uploads straight to TestFlight.
-  - **Build number:** the GitHub run number. `ITSAppUsesNonExemptEncryption = NO` skips the export-compliance questions.
-- **Cost:**
-  - GitHub Actions is [free for public repos][ghpricing].
-  - For a private repo, macOS minutes count about 10× against the 2,000 free minutes a month. That still covers roughly 15–25 builds.
-  - If you ever have a Mac, [Xcode Cloud][xcodecloud] (25 hours a month included with the program) is an alternative.
+  - `swift test` for PadelKit on Linux;
+  - on a GitHub macOS runner, `xcodegen` plus an **unsigned** `xcodebuild` of the iPhone app with the watch app embedded.
+- This matters because code can be written from anywhere (including a Claude Code cloud session, which runs on Linux). CI proves every push compiles before you pull it to your Mac to deploy.
+- **Cost:** free for a public repo. For a private repo, macOS minutes count about 10× against the 2,000 free minutes a month, which is roughly 15–25 builds ([pricing][ghpricing]).
 
 ---
 
 ## 7. Sharing
 
-- **The app:**
-  - Share TestFlight's **public link**, which also appears as a QR code in *Settings → Invite friends*.
-  - Friends need iOS 18 or later. A watch is optional, since they can keep score on the phone.
-  - For external testers, the first build of each version goes through a short Beta App Review (usually about a day).
-  - You are an *internal* tester, so review never blocks you.
-  - Later, a free **App Store** release makes it a one-tap install for anyone. It needs a privacy policy, which can live on GitHub Pages and simply say "no data collected".
-- **Results:** share cards (square and 9:16) through the iOS share sheet to WhatsApp, Instagram or Messages, plus CSV/JSON export.
-- **Live:** the courtside scoreboard on a phone or iPad. A spectator web link could come later.
+- **Results (fully free):** share cards (square and 9:16) through the iOS share sheet to WhatsApp, Instagram or Messages, plus CSV/JSON export.
+- **Live:** the courtside scoreboard mode on your phone or an iPad.
+- **The app itself** is the part the free route limits:
+  - Friends **with a Mac** can build it from the repo with the same `make setup` / `make deploy` steps. A public repo makes that easy.
+  - Friends **without a Mac** can't install it for free. If a few want it, the $99/yr upgrade turns on TestFlight links ([Appendix A](#appendix-a-upgrade-path-testflight)); nothing in the app needs to change.
+  - *Maybe later:* a phone-only web version (no watch) that anyone can open from a link, reusing the same rules as the engine.
 
 ---
 
 ## 8. Roadmap
 
-Phase 0 comes first on purpose: it proves the "easy to install" part before any padel code exists.
+Phase 0 comes first on purpose: it proves installing on your iPhone and Ultra works, and answers the HealthKit question, before any padel code exists.
 
 | Phase | Deliverable | Done when |
 |---|---|---|
-| **0 · Pipeline** | Repo skeleton, XcodeGen project, "Hello, padel" watch + phone app, CI, TestFlight workflow | The hello-world app is on your iPhone and Ultra via TestFlight |
-| **1 · Engine** | PadelKit with every rule in §3, all covered by tests | Replays of real pro matches give the right scores and servers |
-| **2 · Watch MVP** | Setup, scoring, undo, serve and side, alerts, journal and resume, workout, summary | You play 3 real matches without a wrong score or a lost point |
+| **0 · Pipeline** | Repo skeleton, XcodeGen project, "Hello, padel" watch + phone app, `make setup` / `make deploy`, CI, a HealthKit test | The hello-world app runs on your iPhone and Ultra, and we know whether HealthKit works on the free team |
+| **1 · Engine** | PadelKit with every rule in §3, all covered by tests | Replays of real matches give the right scores and servers |
+| **2 · Watch MVP** | Setup, scoring, undo, serve and side, alerts, journal and resume, workout (if HealthKit works), summary | You play 3 real matches without a wrong score or a lost point |
 | **3 · Phone MVP** | History, match detail, player sync, share card | A match appears on the phone and can be posted to WhatsApp |
-| **4 · v0.2** | Scoreboard, Live Activity, stats, story cards, export, external TestFlight + invite QR | Friends are installing it from your link |
-| **5 · v0.3** | Action Button, Double Tap, voice, complication, Always-On, changeover timer | You start a match with the Action Button and score your own points without touching the screen |
+| **4 · v0.2** | Scoreboard, Live Activity, stats, story cards, export | You'd rather check stats in the app than in your head |
+| **5 · v0.3** | Double Tap, voice, Action Button (if HealthKit works), Always-On, changeover timer | You score your own points with Double Tap, without touching the screen |
 
 ---
 
@@ -433,23 +421,44 @@ Phase 0 comes first on purpose: it proves the "easy to install" part before any 
 | App killed mid-match (competitors' top complaint) | Journal written after every point, workout session recovery, resume on launch |
 | Wrong server after players swap the order between sets | Serve-order prompt at each set start, plus "fix server" at any time |
 | Rules vary from club to club | Presets, every rule configurable, table-tested engine |
-| TestFlight builds expire after 90 days | Monthly scheduled CI build |
-| Beta App Review delays for friends | Internal testing (you) is never blocked; friends wait about a day per version |
+| The 7-day signature expires right before a match | Deploy the evening before playing; weekly reminder; `make deploy` is one command |
+| HealthKit not allowed on a free team | Tested in Phase 0; `NO_HEALTHKIT` build still scores; "Return to Clock: After 1 hour" keeps it on screen |
+| Free-team limits (3 apps per device, 10 App IDs a week) | MVP is just the iPhone app + watch app; extensions only if they fit |
+| Advantage games can run long | Star Point preset is one tap away if your group ever wants shorter games |
 | Double Tap firing while you hold the racket | Opt-in, with a haptic and easy undo |
-| iOS code can't be compiled on Linux / without a Mac | All app builds run on GitHub's macOS runners; the engine can be tested anywhere |
-| Original Ultra (watchOS 26 at most) vs newer Ultras (watchOS 27) | Minimum watchOS 11; Double Tap only where the hardware has it |
+| iOS code can't be compiled on Linux | CI builds on GitHub's macOS runners; the engine can be tested anywhere; you deploy from your Mac |
 
 ---
 
-## 11. Decisions needed from you
+## 11. Decisions
 
-1. **Are you OK spending $99/yr** on the Apple Developer Program (Route A)? Without it, the only route is B: it needs a Mac, you re-install weekly, and you can't share.
-2. **Do you have a Mac?** Route A doesn't need one, but it makes debugging on the watch faster.
-3. **Which Ultra do you have** (1st gen, 2, 3 or 4)? The 1st gen has no Double Tap and stays on watchOS 26.
-4. **What rules do you usually play?** Golden point, star point or advantage? A super tie-break instead of a third set? This becomes the default preset.
+**Made (29 Sep 2026)**
+
+1. **Apple Developer Program:** no. Install with Xcode and a free Apple Account; TestFlight stays documented as an upgrade path.
+2. **Mac:** yes. It is the install machine.
+3. **Watch:** Apple Watch Ultra 3 (to be confirmed). Double Tap is in scope.
+4. **Rules:** advantage. The default preset is *Classic*.
+
+**Still open** (not blocking Phase 0)
+
 5. **Four player names, or just "Us vs Them"?**
-6. **Public or private repo?** Public means free CI minutes, and friends could build it themselves.
-7. **App name?** It must be unique in App Store Connect; a working title is fine for now.
+6. **Public or private repo?** Public means free CI minutes, and friends with a Mac can build it themselves.
+7. **App name?** A working title is fine.
+
+---
+
+## Appendix A: upgrade path (TestFlight)
+
+If you later want friends to install it with a link, join the [Apple Developer Program][enroll] ($99/yr; possible from the Apple Developer app on your iPhone). Then:
+
+1. Register the app IDs `com.<you>.padel` and `com.<you>.padel.watchkitapp` and tick HealthKit on both.
+2. Create the app in App Store Connect (the name must be unique on the store).
+3. Create an App Store Connect API key with the **Admin** role, so Xcode can create signing certificates in the cloud ([cloud signing][cloudsigning]).
+4. Add GitHub secrets `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_P8` and a variable `APPLE_TEAM_ID`.
+5. A `testflight.yml` workflow archives with `-allowProvisioningUpdates`, exports with `destination: upload`, and uses the GitHub run number as the build number.
+6. Share the [TestFlight][testflight] public link (up to 10,000 people). The first build of each version for external testers goes through a short Beta App Review. Builds last 90 days, so a monthly scheduled build keeps them fresh.
+
+[Xcode Cloud][xcodecloud] (25 hours a month included with the program) is an alternative to GitHub Actions, since you have a Mac.
 
 ---
 
