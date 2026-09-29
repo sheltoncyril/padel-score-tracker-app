@@ -91,7 +91,7 @@ final class HealthCheckModel: NSObject, HKWorkoutSessionDelegate {
         steps[index].status = status
     }
 
-    private static func describe(_ error: Error) -> String {
+    nonisolated private static func describe(_ error: Error) -> String {
         let ns = error as NSError
         return "\(ns.domain) \(ns.code): \(ns.localizedDescription)"
     }

@@ -78,6 +78,10 @@ jobs:
           ! plutil -p "$app/Info.plist" | grep -q workout-processing
           ! plutil -p "$app/Info.plist" | grep -q NSHealth
 
+      - name: Show compiler errors
+        if: failure()
+        run: grep -hE 'error:|warning: .*(concurren|isolat|Sendable)' build-*.log | sort -u || true
+
       - name: Upload build logs
         if: failure()
         uses: actions/upload-artifact@v4
