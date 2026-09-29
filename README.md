@@ -1,4 +1,6 @@
-# Padel Score Tracker
+# Por Tres
+
+*Working title for the padel score tracker.*
 
 Keep padel score from your Apple Watch: who's serving and from which side, golden point / Star Point, tie-breaks and super tie-breaks. An iPhone companion handles history, stats and sharing.
 

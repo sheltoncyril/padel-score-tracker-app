@@ -1,9 +1,9 @@
-# Padel Score Tracker: Plan
+# Por Tres: Padel Score Tracker Plan
 
 An iPhone + Apple Watch app, designed for the Apple Watch Ultra first. It keeps the padel score, shows who is serving and from which side, logs the match as a workout, and makes results easy to share.
 
 > **Status:** planning. Nothing is built yet.
-> **Decided:** free install from Xcode on your Mac (no $99 program), Apple Watch Ultra 3, advantage scoring by default. See [§11](#11-decisions).
+> **Decided:** working name *Por Tres*; free install from Xcode on your Mac (no $99 program); Apple Watch Ultra 3; advantage scoring by default; public repo. See [§11](#11-decisions).
 > Research done in September 2026, when watchOS 27 / iOS 27 were current.
 
 ![Apple Watch mockups: scoring, Star Point, summary](docs/mockups/watch-scoring.svg)
@@ -201,7 +201,7 @@ Sources: the [FIP Rules of Padel][fiprules] (2026 edition) and the FIP's [Star P
 1. **Home:** ▶ Quick start · New match · History.
 2. **Setup:**
    - pick a preset;
-   - player names are optional and synced from the phone;
+   - players: "Us vs Them" by default, or pick up to four named players synced from the phone;
    - choose who serves first: tap a team, or 🎲 to pick at random.
 3. **Scoring.**
 4. **Summary.**
@@ -338,7 +338,7 @@ Why this route: an app reaches an Apple Watch only through Xcode or through Appl
 ### One-time setup (about 30 minutes)
 1. **Install Xcode 26 or later** from the Mac App Store, and XcodeGen with `brew install xcodegen`.
 2. **Add your Apple Account** in *Xcode → Settings → Accounts*. Xcode creates your free *Personal Team*.
-3. **Clone the repo and generate the project:** `make setup TEAM_ID=<your team id>` runs `xcodegen` and sets a unique bundle ID such as `com.<yourname>.padel`.
+3. **Clone the repo and generate the project:** `make setup TEAM_ID=<your team id>` runs `xcodegen` and sets the bundle ID `com.sheltoncyril.portres`.
 4. **Prepare the iPhone:**
    - connect it by cable the first time and tap *Trust*;
    - turn on *Settings → Privacy & Security → Developer Mode* and restart.
@@ -439,11 +439,9 @@ Phase 0 comes first on purpose: it proves installing on your iPhone and Ultra wo
 3. **Watch:** Apple Watch Ultra 3 (to be confirmed). Double Tap is in scope.
 4. **Rules:** advantage. The default preset is *Classic*.
 
-**Still open** (not blocking Phase 0)
-
-5. **Four player names, or just "Us vs Them"?**
-6. **Public or private repo?** Public means free CI minutes, and friends with a Mac can build it themselves.
-7. **App name?** A working title is fine.
+5. **Players:** both. Matches default to "Us vs Them"; naming all four players is optional (names come from the phone and enable per-player stats and "Ana serves" labels).
+6. **Repo:** public (already is), so CI minutes are free and friends with a Mac can build it.
+7. **Name:** **Por Tres** (working title). In padel, a *por tres* is a smash hit so hard it bounces out over the side wall, the shot everyone wants to hit. It is short, padel-specific, and no App Store app by that name turned up in a quick search (*Bandeja* and *Víbora* are both taken). Bundle ID: `com.sheltoncyril.portres`, watch app `com.sheltoncyril.portres.watchkitapp`.
 
 ---
 
@@ -451,7 +449,7 @@ Phase 0 comes first on purpose: it proves installing on your iPhone and Ultra wo
 
 If you later want friends to install it with a link, join the [Apple Developer Program][enroll] ($99/yr; possible from the Apple Developer app on your iPhone). Then:
 
-1. Register the app IDs `com.<you>.padel` and `com.<you>.padel.watchkitapp` and tick HealthKit on both.
+1. Register the app IDs `com.sheltoncyril.portres` and `com.sheltoncyril.portres.watchkitapp` and tick HealthKit on both.
 2. Create the app in App Store Connect (the name must be unique on the store).
 3. Create an App Store Connect API key with the **Admin** role, so Xcode can create signing certificates in the cloud ([cloud signing][cloudsigning]).
 4. Add GitHub secrets `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_P8` and a variable `APPLE_TEAM_ID`.
